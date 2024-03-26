@@ -22,6 +22,9 @@ const OneTimePayment = () => {
       label: "Loan Account Number",
       placeholder: "Enter value",
       type: "number" as IInput["type"],
+      schema: {
+        required: "Loan Account Number is required",
+      },
     },
     {
       id: "type-of-checking",
@@ -56,7 +59,7 @@ const OneTimePayment = () => {
       minLength: 9,
       maxLength: 12,
       schema: {
-        required: "Routing Number is required",
+        required: "Bank Account Number is required",
       },
       hidden: "typeOfChecking:debitCard",
     },
@@ -68,6 +71,9 @@ const OneTimePayment = () => {
       type: "number" as IInput["type"],
       minLength: 9,
       maxLength: 12,
+      schema: {
+        required: "Confirm Bank Account Number is required",
+      },
       hidden: "typeOfChecking:debitCard",
     },
 
@@ -78,6 +84,9 @@ const OneTimePayment = () => {
       label: "Card Number",
       placeholder: "Enter value",
       type: "number" as IInput["type"],
+      schema: {
+        required: "Card Number is required",
+      },
       hidden: "typeOfChecking:checking",
     },
     {
@@ -87,6 +96,9 @@ const OneTimePayment = () => {
       placeholder: "Enter value",
       type: "text" as IInput["type"],
       hidden: "typeOfChecking:checking",
+      schema: {
+        required: "Card Number is required",
+      },
     },
     {
       id: "expiration-date",
@@ -95,6 +107,10 @@ const OneTimePayment = () => {
       placeholder: "Enter value",
       type: "text" as IInput["type"],
       hidden: "typeOfChecking:checking",
+      schema: {
+        required: "Expiration Date is required",
+      },
+      group: "exp-cvv",
     },
     {
       id: "cvv",
@@ -105,6 +121,10 @@ const OneTimePayment = () => {
       maxLength: 3,
       type: "number" as IInput["type"],
       hidden: "typeOfChecking:checking",
+      schema: {
+        required: "CVV number is required",
+      },
+      group: "exp-cvv",
     },
   ];
   type FormSchema = typeof fields | { [key: string]: string };
@@ -112,6 +132,7 @@ const OneTimePayment = () => {
     register,
     handleSubmit,
     watch,
+    control,
     formState: { errors },
   } = useForm<FormSchema>({
     defaultValues: { typeOfChecking: "checking" },
@@ -136,10 +157,12 @@ const OneTimePayment = () => {
             {(field.type === "text" ||
               field.type === "textarea" ||
               field.type === "number") && (
-              <Input {...field} register={register} />
+              <Input {...field} control={control} register={register} />
             )}
             {/* Radio select */}
-            {field.type === "radio" && <Radio {...field} register={register} />}
+            {field.type === "radio" && (
+              <Radio {...field} control={control} register={register} />
+            )}
           </>
         );
       },
@@ -155,13 +178,13 @@ const OneTimePayment = () => {
       <Form onSubmit={handleSubmit(onSubmit)} name={ONE_TIME_PAYMENT_FORM}>
         <>
           <div className="border-2 border-gray-300 p-4">
-            <div className="flex flex-col gap-6 w-min">
+            <div className="flex flex-col gap-6">
               {fields?.map((field) => (
                 <FieldsRenderer key={field.id} field={field} />
               ))}
             </div>
           </div>
-          <div>
+          <div className="py-4">
             <Button type="submit">{ONE_TIME_PAYMENT_MAKE_PAY}</Button>
           </div>
         </>

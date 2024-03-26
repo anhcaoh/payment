@@ -1,11 +1,15 @@
+import { useFormState } from "react-hook-form";
+
 export interface IRadio {
   label?: string | JSX.Element;
   name?: string;
   values: { name: string; label: string; value: string }[];
   register?: any;
   schema?: any;
+  control?: any;
 }
-const Radio = ({ label, name, values, register, schema }: IRadio) => {
+const Radio = ({ label, name, values, register, schema, control }: IRadio) => {
+  const { errors } = useFormState({ control });
   return (
     <div className="flex flex-col gap-1">
       {label && (
@@ -27,6 +31,11 @@ const Radio = ({ label, name, values, register, schema }: IRadio) => {
               {optionLabel && (
                 <label htmlFor={optionName} className="text-base">
                   {optionLabel}
+                </label>
+              )}
+              {errors && errors[name!]?.message && (
+                <label className="text-label bg-red-100 p-1 text-red-500">
+                  {errors[name!]?.message as string}
                 </label>
               )}
             </div>

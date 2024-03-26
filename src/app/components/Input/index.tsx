@@ -1,3 +1,5 @@
+import { useFormState } from "react-hook-form";
+
 export interface IInput {
   id: string;
   type?: "number" | "text" | "textarea";
@@ -6,9 +8,9 @@ export interface IInput {
   placeholder?: string;
   minLength?: number;
   maxLength?: number;
-  error?: string | JSX.Element;
-  schema?: any;
   register?: any;
+  schema?: any;
+  control?: any;
 }
 const Input = ({
   type = "text",
@@ -16,12 +18,13 @@ const Input = ({
   label,
   name,
   placeholder,
-  error,
-  schema,
+  control,
+  schema = {},
   register,
   minLength,
   maxLength,
 }: IInput) => {
+  const { errors } = useFormState({ control });
   const classNameBase = "py-2 px-3 rounded-sm shadow-sm";
   return (
     <div className="flex flex-col gap-1">
@@ -69,9 +72,9 @@ const Input = ({
       )) ||
         null}
 
-      {error && (
+      {errors && errors[name!] && (
         <label className="text-label bg-red-100 p-1 text-red-500">
-          {error}
+          {errors[name!]?.message as string}
         </label>
       )}
     </div>
