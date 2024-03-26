@@ -1,9 +1,11 @@
 export interface IInput {
   id: string;
-  type?: "text" | "textarea" | "number";
+  type?: "number" | "text" | "textarea";
   label?: string | JSX.Element;
   name?: string;
   placeholder?: string;
+  minLength?: number;
+  maxLength?: number;
   error?: string | JSX.Element;
   schema?: any;
   register?: any;
@@ -17,6 +19,8 @@ const Input = ({
   error,
   schema,
   register,
+  minLength,
+  maxLength,
 }: IInput) => {
   const classNameBase = "py-2 px-3 rounded-sm shadow-sm";
   return (
@@ -26,6 +30,19 @@ const Input = ({
           {label}
         </label>
       )}
+      {(type === "number" && (
+        <input
+          id={id}
+          type={type}
+          name={name}
+          className={classNameBase}
+          placeholder={placeholder}
+          minLength={minLength}
+          maxLength={maxLength}
+          {...register(name, schema)}
+        />
+      )) ||
+        null}
       {(type === "text" && (
         <input
           id={id}
@@ -33,6 +50,8 @@ const Input = ({
           name={name}
           className={classNameBase}
           placeholder={placeholder}
+          minLength={minLength}
+          maxLength={maxLength}
           {...register(name, schema)}
         />
       )) ||
@@ -43,21 +62,13 @@ const Input = ({
           name={name}
           className={classNameBase}
           placeholder={placeholder}
+          minLength={minLength}
+          maxLength={maxLength}
           {...register(name, schema)}
         />
       )) ||
         null}
-      {(type === "number" && (
-        <input
-          id={id}
-          type={type}
-          name={name}
-          className={classNameBase}
-          placeholder={placeholder}
-          {...register(name, schema)}
-        />
-      )) ||
-        null}
+
       {error && (
         <label className="text-label bg-red-100 p-1 text-red-500">
           {error}

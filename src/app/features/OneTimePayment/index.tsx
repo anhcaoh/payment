@@ -5,6 +5,7 @@ import Heading from "@/app/components/Heading";
 import Input, { IInput } from "@/app/components/Input";
 import Paragraph from "@/app/components/Paragraph";
 import Radio from "@/app/components/Radio";
+import { useMemo } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import {
   ONE_TIME_PAYMENT_DESCRIPTION,
@@ -20,7 +21,7 @@ const OneTimePayment = () => {
       name: "loanAccountNumber",
       label: "Loan Account Number",
       placeholder: "Enter value",
-      type: "text" as IInput["type"],
+      type: "number" as IInput["type"],
     },
     {
       id: "type-of-checking",
@@ -38,12 +39,12 @@ const OneTimePayment = () => {
       name: "routingNumber",
       label: "Routing Number",
       placeholder: "Enter value",
-      error: "Routing Number is required",
+      type: "number" as IInput["type"],
+      minLength: 9,
+      maxLength: 9,
       schema: {
-        required: true,
-        message: "Routing Number is required",
+        required: "Routing Number is required",
       },
-      type: "text" as IInput["type"],
       hidden: "typeOfChecking:debitCard",
     },
     {
@@ -51,7 +52,12 @@ const OneTimePayment = () => {
       name: "bankAccountNumber",
       label: "Bank Account Number",
       placeholder: "Enter value",
-      type: "text" as IInput["type"],
+      type: "number" as IInput["type"],
+      minLength: 9,
+      maxLength: 12,
+      schema: {
+        required: "Routing Number is required",
+      },
       hidden: "typeOfChecking:debitCard",
     },
     {
@@ -59,7 +65,9 @@ const OneTimePayment = () => {
       name: "confirmBankAccountNumber",
       label: "Confirm Bank Account Number",
       placeholder: "Enter value",
-      type: "text" as IInput["type"],
+      type: "number" as IInput["type"],
+      minLength: 9,
+      maxLength: 12,
       hidden: "typeOfChecking:debitCard",
     },
 
@@ -69,7 +77,7 @@ const OneTimePayment = () => {
       name: "cardNumber",
       label: "Card Number",
       placeholder: "Enter value",
-      type: "text" as IInput["type"],
+      type: "number" as IInput["type"],
       hidden: "typeOfChecking:checking",
     },
     {
@@ -93,6 +101,8 @@ const OneTimePayment = () => {
       name: "cvv",
       label: "CVV",
       placeholder: "Enter value",
+      minLength: 3,
+      maxLength: 3,
       type: "number" as IInput["type"],
       hidden: "typeOfChecking:checking",
     },
@@ -102,7 +112,6 @@ const OneTimePayment = () => {
     register,
     handleSubmit,
     watch,
-    getValues,
     formState: { errors },
   } = useForm<FormSchema>({
     defaultValues: { typeOfChecking: "checking" },
@@ -111,18 +120,31 @@ const OneTimePayment = () => {
     console.log(data);
   };
 
-  const FieldsRenderer = ({ field }: { field: any }) => {
-    return (
-      <>
-        {/* Input text/texarea/number */}
-        {(field.type === "text" ||
-          field.type === "textarea" ||
-          field.type === "number") && <Input {...field} register={register} />}
-        {/* Radio select */}
-        {field.type === "radio" && <Radio {...field} register={register} />}
-      </>
-    );
-  };
+  const FieldsRenderer = useMemo(
+    () =>
+      ({ field }: { field: any }) => {
+        const hiddenOnCondition = field.hidden?.split(":");
+        const [key, value] = hiddenOnCondition || [];
+        const values = watch();
+        const isHidden =
+          hiddenOnCondition &&
+          values &&
+          (values as { [key: string]: string })[key] === value;
+        return isHidden ? null : (
+          <>
+            {/* Input text/texarea/number */}
+            {(field.type === "text" ||
+              field.type === "textarea" ||
+              field.type === "number") && (
+              <Input {...field} register={register} />
+            )}
+            {/* Radio select */}
+            {field.type === "radio" && <Radio {...field} register={register} />}
+          </>
+        );
+      },
+    []
+  );
 
   return (
     <>
@@ -134,18 +156,9 @@ const OneTimePayment = () => {
         <>
           <div className="border-2 border-gray-300 p-4">
             <div className="flex flex-col gap-6 w-min">
-              {fields?.map((field) => {
-                const hiddenOnCondition = field.hidden?.split(":");
-                const [key, value] = hiddenOnCondition || [];
-                const values = watch();
-                const isHidden =
-                  hiddenOnCondition &&
-                  values &&
-                  (values as { [key: string]: string })[key] === value;
-                return isHidden ? null : (
-                  <FieldsRenderer key={field.id} field={field} />
-                );
-              })}
+              {fields?.map((field) => (
+                <FieldsRenderer key={field.id} field={field} />
+              ))}
             </div>
           </div>
           <div>
