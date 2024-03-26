@@ -44,6 +44,7 @@ const OneTimePayment = () => {
         message: "Routing Number is required",
       },
       type: "text" as IInput["type"],
+      hidden: "typeOfChecking:debitCard",
     },
     {
       id: "bank-account-number",
@@ -51,6 +52,7 @@ const OneTimePayment = () => {
       label: "Bank Account Number",
       placeholder: "Enter value",
       type: "text" as IInput["type"],
+      hidden: "typeOfChecking:debitCard",
     },
     {
       id: "confirm-bank-account-number",
@@ -58,6 +60,7 @@ const OneTimePayment = () => {
       label: "Confirm Bank Account Number",
       placeholder: "Enter value",
       type: "text" as IInput["type"],
+      hidden: "typeOfChecking:debitCard",
     },
 
     // Debit Card
@@ -67,7 +70,7 @@ const OneTimePayment = () => {
       label: "Card Number",
       placeholder: "Enter value",
       type: "text" as IInput["type"],
-      hidden: "typeOfChecking:check",
+      hidden: "typeOfChecking:checking",
     },
     {
       id: "name-on-card",
@@ -75,6 +78,7 @@ const OneTimePayment = () => {
       label: "Name On Card",
       placeholder: "Enter value",
       type: "text" as IInput["type"],
+      hidden: "typeOfChecking:checking",
     },
     {
       id: "expiration-date",
@@ -82,6 +86,7 @@ const OneTimePayment = () => {
       label: "Expiration Date",
       placeholder: "Enter value",
       type: "text" as IInput["type"],
+      hidden: "typeOfChecking:checking",
     },
     {
       id: "cvv",
@@ -89,6 +94,7 @@ const OneTimePayment = () => {
       label: "CVV",
       placeholder: "Enter value",
       type: "number" as IInput["type"],
+      hidden: "typeOfChecking:checking",
     },
   ];
   type FormSchema = typeof fields | { [key: string]: string };
@@ -128,7 +134,6 @@ const OneTimePayment = () => {
         <>
           <div className="border-2 border-gray-300 p-4">
             <div className="flex flex-col gap-6 w-min">
-              {JSON.stringify(watch())}
               {fields?.map((field) => {
                 const hiddenOnCondition = field.hidden?.split(":");
                 const [key, value] = hiddenOnCondition || [];
@@ -137,7 +142,9 @@ const OneTimePayment = () => {
                   hiddenOnCondition &&
                   values &&
                   (values as { [key: string]: string })[key] === value;
-                return <FieldsRenderer key={field.id} field={field} />;
+                return isHidden ? null : (
+                  <FieldsRenderer key={field.id} field={field} />
+                );
               })}
             </div>
           </div>
