@@ -1,9 +1,11 @@
+"use client";
 import Button from "@/app/components/Button";
 import Form from "@/app/components/Form";
 import Heading from "@/app/components/Heading";
 import Input, { IInput } from "@/app/components/Input";
 import Paragraph from "@/app/components/Paragraph";
 import Radio from "@/app/components/Radio";
+import { SubmitHandler, useForm } from "react-hook-form";
 import {
   ONE_TIME_PAYMENT_DESCRIPTION,
   ONE_TIME_PAYMENT_FORM,
@@ -15,25 +17,25 @@ const OneTimePayment = () => {
   const fields = [
     {
       id: "loan-account-number",
-      name: "loan-account-number",
+      name: "loanAccountNumber",
       label: "Loan Account Number",
       placeholder: "Enter value",
       type: "text" as IInput["type"],
     },
     {
       id: "type-of-checking",
-      name: "type-of-checking",
+      name: "typeOfChecking",
       label: "Type of Checking",
       type: "radio",
       values: [
-        { name: "checking", label: "Checking", value: "checking" },
-        { name: "debit-card", label: "Debit Card", value: "debit-card" },
+        { name: "checking", label: "Checking" },
+        { name: "debitCard", label: "Debit Card" },
       ],
     },
     // Checking
     {
       id: "routing-number",
-      name: "routing-number",
+      name: "routingNumber",
       label: "Routing Number",
       placeholder: "Enter value",
       error: "Routing Number is required",
@@ -45,14 +47,14 @@ const OneTimePayment = () => {
     },
     {
       id: "bank-account-number",
-      name: "bank-account-number",
+      name: "bankAccountNumber",
       label: "Bank Account Number",
       placeholder: "Enter value",
       type: "text" as IInput["type"],
     },
     {
       id: "confirm-bank-account-number",
-      name: "confirm-bank-account-number",
+      name: "confirmBankAccountNumber",
       label: "Confirm Bank Account Number",
       placeholder: "Enter value",
       type: "text" as IInput["type"],
@@ -61,42 +63,57 @@ const OneTimePayment = () => {
     // Debit Card
     {
       id: "card-number",
-      name: "card-number",
+      name: "cardNumber",
       label: "Card Number",
       placeholder: "Enter value",
       type: "text" as IInput["type"],
+      hidden: "typeOfChecking:check",
     },
     {
       id: "name-on-card",
-      name: "name-on-card",
+      name: "nameOnCard",
       label: "Name On Card",
       placeholder: "Enter value",
       type: "text" as IInput["type"],
     },
     {
       id: "expiration-date",
-      name: "expiration-date",
+      name: "expirationDate",
       label: "Expiration Date",
       placeholder: "Enter value",
       type: "text" as IInput["type"],
     },
     {
-      id: "cvv-number",
-      name: "cvv-number",
+      id: "cvv",
+      name: "cvv",
       label: "CVV",
       placeholder: "Enter value",
       type: "number" as IInput["type"],
     },
   ];
+  type FormSchema = typeof fields | { [key: string]: string };
+  const {
+    register,
+    handleSubmit,
+    watch,
+    getValues,
+    formState: { errors },
+  } = useForm<FormSchema>({
+    defaultValues: { typeOfChecking: "checking" },
+  });
+  const onSubmit: SubmitHandler<FormSchema> = (data) => {
+    console.log(data);
+  };
+
   const FieldsRenderer = ({ field }: { field: any }) => {
     return (
       <>
         {/* Input text/texarea/number */}
         {(field.type === "text" ||
           field.type === "textarea" ||
-          field.type === "number") && <Input {...field} />}
+          field.type === "number") && <Input {...field} register={register} />}
         {/* Radio select */}
-        {field.type === "radio" && <Radio {...field} />}
+        {field.type === "radio" && <Radio {...field} register={register} />}
       </>
     );
   };
@@ -107,18 +124,25 @@ const OneTimePayment = () => {
         <Heading>{ONE_TIME_PAYMENT_HEADING}</Heading>
         <Paragraph>{ONE_TIME_PAYMENT_DESCRIPTION}</Paragraph>
       </div>
-      <Form name={ONE_TIME_PAYMENT_FORM}>
+      <Form onSubmit={handleSubmit(onSubmit)} name={ONE_TIME_PAYMENT_FORM}>
         <>
           <div className="border-2 border-gray-300 p-4">
-            {/* TODO render inputs */}
             <div className="flex flex-col gap-6 w-min">
+              {JSON.stringify(watch())}
               {fields?.map((field) => {
+                const hiddenOnCondition = field.hidden?.split(":");
+                const [key, value] = hiddenOnCondition || [];
+                const values = watch();
+                const isHidden =
+                  hiddenOnCondition &&
+                  values &&
+                  (values as { [key: string]: string })[key] === value;
                 return <FieldsRenderer key={field.id} field={field} />;
               })}
             </div>
           </div>
           <div>
-            <Button>{ONE_TIME_PAYMENT_MAKE_PAY}</Button>
+            <Button type="submit">{ONE_TIME_PAYMENT_MAKE_PAY}</Button>
           </div>
         </>
       </Form>

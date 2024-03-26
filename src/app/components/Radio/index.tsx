@@ -1,10 +1,11 @@
-export interface IRadioSelect {
-  id: string;
+export interface IRadio {
   label?: string | JSX.Element;
   name?: string;
   values: { name: string; label: string; value: string }[];
+  register?: any;
+  schema?: any;
 }
-const Radio = ({ id, label, name, values }: IRadioSelect) => {
+const Radio = ({ label, name, values, register, schema }: IRadio) => {
   return (
     <div className="flex flex-col gap-1">
       {label && (
@@ -13,10 +14,16 @@ const Radio = ({ id, label, name, values }: IRadioSelect) => {
         </label>
       )}
       <div className="flex flex-row gap-4">
-        {values?.map(({ name: optionName, label: optionLabel, value }) => {
+        {values?.map(({ name: optionName, label: optionLabel }) => {
           return (
             <div key={optionName} className="flex flex-row gap-1 align-middle">
-              <input type="radio" id={optionName} name={name} value={value} />
+              <input
+                type="radio"
+                id={optionName}
+                name={name}
+                value={optionName}
+                {...register(name, schema)}
+              />
               {optionLabel && (
                 <label htmlFor={optionName} className="text-base">
                   {optionLabel}

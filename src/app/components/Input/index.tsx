@@ -5,6 +5,8 @@ export interface IInput {
   name?: string;
   placeholder?: string;
   error?: string | JSX.Element;
+  schema?: any;
+  register?: any;
 }
 const Input = ({
   type = "text",
@@ -13,6 +15,8 @@ const Input = ({
   name,
   placeholder,
   error,
+  schema,
+  register,
 }: IInput) => {
   const classNameBase = "py-2 px-3 rounded-sm shadow-sm";
   return (
@@ -29,6 +33,7 @@ const Input = ({
           name={name}
           className={classNameBase}
           placeholder={placeholder}
+          {...register(name, schema)}
         />
       )) ||
         null}
@@ -38,6 +43,7 @@ const Input = ({
           name={name}
           className={classNameBase}
           placeholder={placeholder}
+          {...register(name, schema)}
         />
       )) ||
         null}
@@ -48,6 +54,7 @@ const Input = ({
           name={name}
           className={classNameBase}
           placeholder={placeholder}
+          {...register(name, schema)}
         />
       )) ||
         null}
