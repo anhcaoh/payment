@@ -1,9 +1,9 @@
 import Button from "@/app/components/Button";
 import Form from "@/app/components/Form";
 import Heading from "@/app/components/Heading";
+import Input, { IInput } from "@/app/components/Input";
 import Paragraph from "@/app/components/Paragraph";
 import Radio from "@/app/components/Radio";
-import Text, { ITextInput } from "@/app/components/Text";
 import {
   ONE_TIME_PAYMENT_DESCRIPTION,
   ONE_TIME_PAYMENT_FORM,
@@ -18,7 +18,7 @@ const OneTimePayment = () => {
       name: "loan-account-number",
       label: "Loan Account Number",
       placeholder: "Enter value",
-      type: "text" as ITextInput["type"],
+      type: "text" as IInput["type"],
     },
     {
       id: "type-of-checking",
@@ -30,6 +30,7 @@ const OneTimePayment = () => {
         { name: "debit-card", label: "Debit Card", value: "debit-card" },
       ],
     },
+    // Checking
     {
       id: "routing-number",
       name: "routing-number",
@@ -40,30 +41,60 @@ const OneTimePayment = () => {
         required: true,
         message: "Routing Number is required",
       },
-      type: "text" as ITextInput["type"],
+      type: "text" as IInput["type"],
     },
     {
       id: "bank-account-number",
       name: "bank-account-number",
       label: "Bank Account Number",
       placeholder: "Enter value",
-      type: "text" as ITextInput["type"],
+      type: "text" as IInput["type"],
     },
     {
       id: "confirm-bank-account-number",
       name: "confirm-bank-account-number",
       label: "Confirm Bank Account Number",
       placeholder: "Enter value",
-      type: "text" as ITextInput["type"],
+      type: "text" as IInput["type"],
+    },
+
+    // Debit Card
+    {
+      id: "card-number",
+      name: "card-number",
+      label: "Card Number",
+      placeholder: "Enter value",
+      type: "text" as IInput["type"],
+    },
+    {
+      id: "name-on-card",
+      name: "name-on-card",
+      label: "Name On Card",
+      placeholder: "Enter value",
+      type: "text" as IInput["type"],
+    },
+    {
+      id: "expiration-date",
+      name: "expiration-date",
+      label: "Expiration Date",
+      placeholder: "Enter value",
+      type: "text" as IInput["type"],
+    },
+    {
+      id: "cvv-number",
+      name: "cvv-number",
+      label: "CVV",
+      placeholder: "Enter value",
+      type: "number" as IInput["type"],
     },
   ];
   const FieldsRenderer = ({ field }: { field: any }) => {
     return (
       <>
-        {/* Text input/texarea */}
-        {(field.type === "text" || field.type === "textarea") && (
-          <Text {...field} />
-        )}
+        {/* Input text/texarea/number */}
+        {(field.type === "text" ||
+          field.type === "textarea" ||
+          field.type === "number") && <Input {...field} />}
         {/* Radio select */}
         {field.type === "radio" && <Radio {...field} />}
       </>

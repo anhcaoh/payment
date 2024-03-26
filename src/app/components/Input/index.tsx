@@ -1,19 +1,19 @@
-export interface ITextInput {
+export interface IInput {
   id: string;
-  type?: "text" | "textarea";
+  type?: "text" | "textarea" | "number";
   label?: string | JSX.Element;
   name?: string;
   placeholder?: string;
   error?: string | JSX.Element;
 }
-const Text = ({
+const Input = ({
   type = "text",
   id,
   label,
   name,
   placeholder,
   error,
-}: ITextInput) => {
+}: IInput) => {
   const classNameBase = "py-2 px-3 rounded-sm shadow-sm";
   return (
     <div className="flex flex-col gap-1">
@@ -41,6 +41,16 @@ const Text = ({
         />
       )) ||
         null}
+      {(type === "number" && (
+        <input
+          id={id}
+          type={type}
+          name={name}
+          className={classNameBase}
+          placeholder={placeholder}
+        />
+      )) ||
+        null}
       {error && (
         <label className="text-label bg-red-100 p-1 text-red-500">
           {error}
@@ -50,4 +60,4 @@ const Text = ({
   );
 };
 
-export default Text;
+export default Input;
