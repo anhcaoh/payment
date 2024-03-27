@@ -134,7 +134,7 @@ const OneTimePayment = () => {
             <Paragraph>{ONE_TIME_PAYMENT_DESCRIPTION}</Paragraph>
           </div>
           <div className="bg-white dark:bg-transparent dark:border-slate-800 border-2 border-gray-300 grid lg:grid-cols-2 sm:grid-cols-1">
-            <div className="lg:border-r-2 divide-y-2 divide-gray-300 dark:divide-slate-800 flex flex-col">
+            <div className="lg:border-r-2 divide-y-2 divide-gray-300 dark:border-slate-800 dark:divide-slate-800 flex flex-col">
               {Object.entries(groupedByFields)?.map((keyFields) => {
                 const [key, fields] = keyFields as [string, {}[]];
                 return (
