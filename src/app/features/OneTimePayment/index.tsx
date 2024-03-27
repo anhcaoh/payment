@@ -118,10 +118,12 @@ const OneTimePayment = () => {
       },
     []
   );
-  const groupedByFields = Object.groupBy(
-    fields,
-    ({ group, name }) => group || name
-  );
+  const groupedByFields = fields.reduce((accum, field) => {
+    const { group, name } = field;
+    accum[group || name] = accum[group || name] ?? [];
+    accum[group || name].push(field);
+    return accum;
+  }, {} as { [key: string]: any[] });
   return (
     <>
       <Form onSubmit={handleSubmit(onSubmit)} name={ONE_TIME_PAYMENT_FORM}>

@@ -34,7 +34,7 @@ const Radio = ({
           {label}
         </label>
       )}
-      <div className="flex flex-row gap-4">
+      <div className="flex flex-row gap-4 py-2">
         {values?.map(({ name: optionName, label: optionLabel }) => {
           return (
             <div key={optionName} className="flex flex-row gap-1 align-middle">
