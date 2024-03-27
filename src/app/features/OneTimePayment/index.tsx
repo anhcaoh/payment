@@ -31,7 +31,7 @@ const OneTimePayment = () => {
 
   const FieldsRenderer = useMemo(
     () =>
-      ({ fields }: { fields: any[] }) => {
+      ({ fields, className }: { fields: any[]; className: string }) => {
         const renderAnyFields = (field: any) => {
           return (
             <>
@@ -39,11 +39,21 @@ const OneTimePayment = () => {
               {(field.type === "text" ||
                 field.type === "textarea" ||
                 field.type === "number") && (
-                <Input {...field} control={control} register={register} />
+                <Input
+                  {...field}
+                  control={control}
+                  register={register}
+                  className={className}
+                />
               )}
               {/* Radio select */}
               {field.type === "radio" && (
-                <Radio {...field} control={control} register={register} />
+                <Radio
+                  {...field}
+                  control={control}
+                  register={register}
+                  className={className}
+                />
               )}
             </>
           );
@@ -94,18 +104,24 @@ const OneTimePayment = () => {
       </div>
       <Form onSubmit={handleSubmit(onSubmit)} name={ONE_TIME_PAYMENT_FORM}>
         <>
-          <div className="border-2 border-gray-300 p-4 grid grid-flow-col auto-cols-max">
-            <div className="flex flex-col gap-6 min-w-[406px]">
+          <div className="sm:divide-x-0 lg:divide-x-2 border-2 border-gray-300 grid place-items-center lg:grid-cols-2 sm:grid-cols-1">
+            <div className="sm:divide-y-0 lg:divide-y-2 divide-gray-300 flex flex-col min-w-[406px]">
               {Object.entries(groupedByFields)?.map((keyFields) => {
                 const [key, fields] = keyFields as [string, {}[]];
-                return <FieldsRenderer key={key} fields={fields} />;
+                return (
+                  <FieldsRenderer
+                    key={key}
+                    fields={fields}
+                    className="px-2 py-4"
+                  />
+                );
               })}
             </div>
             <div className="flex items-end w-80">
               <div className="p-3 text-center">
                 <Paragraph
                   className={[
-                    "leading-5 p-4 font-medium m-auto",
+                    "!leading-5 p-4 font-medium m-auto",
                     watch("typeOfChecking") === "checking" ? "w-60" : "",
                   ]
                     .join(" ")
@@ -131,9 +147,9 @@ const OneTimePayment = () => {
               </div>
             </div>
           </div>
-          <div className="py-4">
+          <div className="py-4 flex gap-2 items-center">
             <Button type="submit">{ONE_TIME_PAYMENT_MAKE_PAYMENT}</Button>
-            <label className="block p-1 text-label">
+            <label className="p-1 text-label">
               {ONE_TIME_PAYMENT_FIELDS_REQUIRED}
             </label>
           </div>

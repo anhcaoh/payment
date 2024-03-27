@@ -7,11 +7,20 @@ export interface IRadio {
   register?: any;
   schema?: any;
   control?: any;
+  className?: string;
 }
-const Radio = ({ label, name, values, register, schema, control }: IRadio) => {
+const Radio = ({
+  label,
+  name,
+  values,
+  register,
+  schema,
+  control,
+  className,
+}: IRadio) => {
   const { errors } = useFormState({ control });
   return (
-    <div className="flex flex-col gap-1">
+    <div className={["flex flex-col gap-1", className].join(" ").trim()}>
       {label && (
         <label htmlFor={values[0].name} className="text-label font-bold">
           {label}

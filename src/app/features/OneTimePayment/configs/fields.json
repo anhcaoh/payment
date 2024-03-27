@@ -89,7 +89,7 @@
   {
     "id": "name-on-card",
     "name": "nameOnCard",
-    "label": "name On Card",
+    "label": "Name On Card",
     "placeholder": "Enter value",
     "type": "text",
     "hidden": "typeOfChecking:checking",

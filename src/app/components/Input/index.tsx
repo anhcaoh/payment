@@ -11,6 +11,7 @@ export interface IInput {
   register?: any;
   schema?: any;
   control?: any;
+  className?: string;
 }
 const Input = ({
   type = "text",
@@ -23,11 +24,12 @@ const Input = ({
   register,
   minLength,
   maxLength,
+  className,
 }: IInput) => {
   const { errors } = useFormState({ control });
-  const classNameBase = "py-2 px-3 rounded-sm shadow-sm";
+  const classNameBase = "py-2 px-3 rounded-sm";
   return (
-    <div className="flex flex-col gap-1">
+    <div className={["flex flex-col gap-1", className].join(" ").trim()}>
       {label && (
         <label htmlFor={id} className="text-label font-bold">
           {label}
