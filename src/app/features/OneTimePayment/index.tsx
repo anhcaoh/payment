@@ -5,6 +5,7 @@ import Heading from "@/app/components/Heading";
 import Input, { IInput } from "@/app/components/Input";
 import Paragraph from "@/app/components/Paragraph";
 import Radio from "@/app/components/Radio";
+import Image from "next/image";
 import { useMemo } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import {
@@ -13,6 +14,8 @@ import {
   ONE_TIME_PAYMENT_FORM,
   ONE_TIME_PAYMENT_HEADING,
   ONE_TIME_PAYMENT_MAKE_PAYMENT,
+  ONE_TIME_PAYMENT_WHERE_CVV_NUMBER,
+  ONE_TIME_PAYMENT_WHERE_ROUTING_ACCOUNT_NUMBER,
 } from "./constants";
 
 const OneTimePayment = () => {
@@ -231,12 +234,31 @@ const OneTimePayment = () => {
       </div>
       <Form onSubmit={handleSubmit(onSubmit)} name={ONE_TIME_PAYMENT_FORM}>
         <>
-          <div className="border-2 border-gray-300 p-4">
+          <div className="border-2 border-gray-300 p-4 flex">
             <div className="flex flex-col gap-6 min-w-[406px]">
               {Object.entries(groupedByFields)?.map((keyFields) => {
                 const [key, fields] = keyFields as [string, {}[]];
                 return <FieldsRenderer key={key} fields={fields} />;
               })}
+            </div>
+            <div className="flex items-end">
+              <div className="p-3">
+                <Paragraph className="font-medium p-6">
+                  {watch("typeOfChecking") === "checking"
+                    ? ONE_TIME_PAYMENT_WHERE_ROUTING_ACCOUNT_NUMBER
+                    : ONE_TIME_PAYMENT_WHERE_CVV_NUMBER}
+                </Paragraph>
+                <Image
+                  alt="helper"
+                  src={
+                    watch("typeOfChecking") === "checking"
+                      ? "/images/check.png"
+                      : "/images/cvv.png"
+                  }
+                  width={306}
+                  height={163}
+                />
+              </div>
             </div>
           </div>
           <div className="py-4">
