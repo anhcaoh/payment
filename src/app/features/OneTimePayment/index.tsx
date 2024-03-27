@@ -2,12 +2,13 @@
 import Button from "@/app/components/Button";
 import Form from "@/app/components/Form";
 import Heading from "@/app/components/Heading";
-import Input, { IInput } from "@/app/components/Input";
+import Input from "@/app/components/Input";
 import Paragraph from "@/app/components/Paragraph";
 import Radio from "@/app/components/Radio";
 import Image from "next/image";
 import { useMemo } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import fields from "./configs/fields.json";
 import {
   ONE_TIME_PAYMENT_DESCRIPTION,
   ONE_TIME_PAYMENT_FIELDS_REQUIRED,
@@ -18,151 +19,10 @@ import {
   ONE_TIME_PAYMENT_WHERE_ROUTING_ACCOUNT_NUMBER,
 } from "./constants";
 
-const OneTimePayment = () => {
-  const fields = [
-    {
-      id: "loan-account-number",
-      name: "loanAccountNumber",
-      label: "Loan Account Number",
-      placeholder: "Enter value",
-      type: "number" as IInput["type"],
-      schema: {
-        required: "Loan Account Number is required",
-      },
-    },
-    {
-      id: "type-of-checking",
-      name: "typeOfChecking",
-      label: "Type of Checking",
-      type: "radio",
-      values: [
-        { name: "checking", label: "Checking" },
-        { name: "debitCard", label: "Debit Card" },
-      ],
-    },
-    // Checking
-    {
-      id: "routing-number",
-      name: "routingNumber",
-      label: "Routing Number",
-      placeholder: "Enter value",
-      type: "number" as IInput["type"],
-      minLength: 9,
-      maxLength: 9,
-      schema: {
-        required: "Routing Number is required",
-      },
-      hidden: "typeOfChecking:debitCard",
-    },
-    {
-      id: "bank-account-number",
-      name: "bankAccountNumber",
-      label: "Bank Account Number",
-      placeholder: "Enter value",
-      type: "number" as IInput["type"],
-      minLength: 9,
-      maxLength: 12,
-      schema: {
-        required: "Bank Account Number is required",
-      },
-      hidden: "typeOfChecking:debitCard",
-    },
-    {
-      id: "confirm-bank-account-number",
-      name: "confirmBankAccountNumber",
-      label: "Confirm Bank Account Number",
-      placeholder: "Enter value",
-      type: "number" as IInput["type"],
-      minLength: 9,
-      maxLength: 12,
-      schema: {
-        required: "Confirm Bank Account Number is required",
-        minLength: {
-          value: 9,
-          message: "At least nine digits",
-        },
-        maxLength: {
-          value: 12,
-          message: "No more than 12 digits",
-        },
-      },
-      hidden: "typeOfChecking:debitCard",
-    },
+export type FormSchema = typeof fields | { [key: string]: string };
 
-    // Debit Card
-    {
-      id: "card-number",
-      name: "cardNumber",
-      label: "Card Number",
-      placeholder: "Enter value",
-      type: "number" as IInput["type"],
-      schema: {
-        required: "Card Number is required",
-        minLength: {
-          value: 12,
-          message: "Valid 12-digits number",
-        },
-        maxLength: {
-          value: 12,
-          message: "Valid 12-digits number",
-        },
-      },
-      hidden: "typeOfChecking:checking",
-    },
-    {
-      id: "name-on-card",
-      name: "nameOnCard",
-      label: "Name On Card",
-      placeholder: "Enter value",
-      type: "text" as IInput["type"],
-      hidden: "typeOfChecking:checking",
-      schema: {
-        required: "Name On Card is required",
-      },
-    },
-    {
-      id: "expiration-date",
-      name: "expirationDate",
-      label: "Expiration Date",
-      placeholder: "Enter value",
-      type: "text" as IInput["type"],
-      hidden: "typeOfChecking:checking",
-      schema: {
-        required: "Expiration Date is required",
-      },
-      group: "expCvv",
-    },
-    {
-      id: "cvv",
-      name: "cvv",
-      label: "CVV",
-      placeholder: "Enter value",
-      minLength: 3,
-      maxLength: 3,
-      type: "number" as IInput["type"],
-      hidden: "typeOfChecking:checking",
-      schema: {
-        required: "CVV number is required",
-        minLength: {
-          value: 3,
-          message: "Valid three digits",
-        },
-        maxLength: {
-          value: 3,
-          message: "Valid three digits",
-        },
-      },
-      group: "expCvv",
-    },
-  ];
-  type FormSchema = typeof fields | { [key: string]: string };
-  const {
-    register,
-    handleSubmit,
-    watch,
-    control,
-    formState: { errors },
-  } = useForm<FormSchema>({
+const OneTimePayment = () => {
+  const { register, handleSubmit, watch, control } = useForm<FormSchema>({
     defaultValues: { typeOfChecking: "checking" },
   });
   const onSubmit: SubmitHandler<FormSchema> = (data) => {
@@ -234,22 +94,32 @@ const OneTimePayment = () => {
       </div>
       <Form onSubmit={handleSubmit(onSubmit)} name={ONE_TIME_PAYMENT_FORM}>
         <>
-          <div className="border-2 border-gray-300 p-4 flex">
+          <div className="border-2 border-gray-300 p-4 grid grid-flow-col auto-cols-max">
             <div className="flex flex-col gap-6 min-w-[406px]">
               {Object.entries(groupedByFields)?.map((keyFields) => {
                 const [key, fields] = keyFields as [string, {}[]];
                 return <FieldsRenderer key={key} fields={fields} />;
               })}
             </div>
-            <div className="flex items-end">
-              <div className="p-3">
-                <Paragraph className="font-medium p-6">
+            <div className="flex items-end w-80">
+              <div className="p-3 text-center">
+                <Paragraph
+                  className={[
+                    "leading-5 p-4 font-medium m-auto",
+                    watch("typeOfChecking") === "checking" ? "w-60" : "",
+                  ]
+                    .join(" ")
+                    .trim()}
+                >
                   {watch("typeOfChecking") === "checking"
                     ? ONE_TIME_PAYMENT_WHERE_ROUTING_ACCOUNT_NUMBER
                     : ONE_TIME_PAYMENT_WHERE_CVV_NUMBER}
                 </Paragraph>
                 <Image
                   alt="helper"
+                  className={
+                    watch("typeOfChecking") === "checking" ? "-ml-4" : ""
+                  }
                   src={
                     watch("typeOfChecking") === "checking"
                       ? "/images/check.png"

@@ -2,7 +2,7 @@ const Paragraph = ({
   className,
   children,
 }: {
-  className: string;
+  className?: string;
   children: string | JSX.Element;
 }) => {
   return (
