@@ -137,11 +137,7 @@ const OneTimePayment = () => {
               {Object.entries(groupedByFields)?.map((keyFields) => {
                 const [key, fields] = keyFields as [string, {}[]];
                 return (
-                  <FieldsRenderer
-                    key={key}
-                    fields={fields}
-                    className="px-2 pt-2 pb-4"
-                  />
+                  <FieldsRenderer key={key} fields={fields} className="p-2" />
                 );
               })}
             </div>
