@@ -22,7 +22,15 @@ const Radio = ({
   return (
     <div className={["flex flex-col gap-1", className].join(" ").trim()}>
       {label && (
-        <label htmlFor={values[0].name} className="text-label font-bold">
+        <label
+          htmlFor={values[0].name}
+          className={[
+            "text-label font-bold",
+            (errors && errors[name!] && "text-red-500") || "",
+          ]
+            .join(" ")
+            .trim()}
+        >
           {label}
         </label>
       )}
@@ -43,7 +51,7 @@ const Radio = ({
                 </label>
               )}
               {errors && errors[name!]?.message && (
-                <label className="text-label bg-red-100 p-1 text-red-500">
+                <label className="text-label bg-red-200 p-1 text-red-500">
                   {errors[name!]?.message as string}
                 </label>
               )}

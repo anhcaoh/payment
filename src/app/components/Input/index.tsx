@@ -31,7 +31,15 @@ const Input = ({
   return (
     <div className={["flex flex-col gap-1", className].join(" ").trim()}>
       {label && (
-        <label htmlFor={id} className="text-label font-bold">
+        <label
+          htmlFor={id}
+          className={[
+            "text-label font-bold",
+            (errors && errors[name!] && "text-red-500") || "",
+          ]
+            .join(" ")
+            .trim()}
+        >
           {label}
         </label>
       )}
@@ -75,7 +83,7 @@ const Input = ({
         null}
 
       {errors && errors[name!] && (
-        <label className="text-label bg-red-100 p-1 text-red-500">
+        <label className="text-label bg-red-200 p-1 text-red-500">
           {errors[name!]?.message as string}
         </label>
       )}

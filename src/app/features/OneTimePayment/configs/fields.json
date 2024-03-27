@@ -28,7 +28,15 @@
     "minLength": 9,
     "maxLength": 9,
     "schema": {
-      "required": "Routing Number is required"
+      "required": "Routing Number is required",
+      "minLength": {
+        "value": 9,
+        "message": "Valid nine digits"
+      },
+      "maxLength": {
+        "value": 9,
+        "message": "Valid nine digits"
+      }
     },
     "hidden": "typeOfChecking:debitCard"
   },
@@ -41,7 +49,15 @@
     "minLength": 9,
     "maxLength": 12,
     "schema": {
-      "required": "Bank Account Number is required"
+      "required": "Bank Account Number is required",
+      "minLength": {
+        "value": 9,
+        "message": "At least nine digits"
+      },
+      "maxLength": {
+        "value": 12,
+        "message": "No more than 12 digits"
+      }
     },
     "hidden": "typeOfChecking:debitCard"
   },
