@@ -6,7 +6,7 @@ import Input from "@/app/components/Input";
 import Paragraph from "@/app/components/Paragraph";
 import Radio from "@/app/components/Radio";
 import Image from "next/image";
-import { useMemo } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import fields from "./configs/fields.json";
 import {
@@ -14,6 +14,7 @@ import {
   ONE_TIME_PAYMENT_FIELDS_REQUIRED,
   ONE_TIME_PAYMENT_FORM,
   ONE_TIME_PAYMENT_HEADING,
+  ONE_TIME_PAYMENT_MADE_CONFIRMATION,
   ONE_TIME_PAYMENT_MAKE_PAYMENT,
   ONE_TIME_PAYMENT_WHERE_CVV_NUMBER,
   ONE_TIME_PAYMENT_WHERE_ROUTING_ACCOUNT_NUMBER,
@@ -22,17 +23,44 @@ import {
 export type FormSchema = typeof fields | { [key: string]: string };
 
 const OneTimePayment = () => {
+  const [paymentMade, setPaymentMade] = useState<{
+    message: string;
+    confirmation: string;
+  } | null>(null);
+  const [paymentError, setPaymentError] = useState<{
+    message: string;
+  } | null>(null);
   const { register, handleSubmit, watch, control } = useForm<FormSchema>({
     defaultValues: { typeOfChecking: "checking" },
   });
-  const onSubmit: SubmitHandler<FormSchema> = (data) => {};
+  const onSubmit: SubmitHandler<FormSchema> = (data) => {
+    fetch("/api/payment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    })
+      .then(async (response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          const error = await response.json();
+          setPaymentError(error);
+        }
+      })
+      .then((paymentMade) => {
+        setPaymentMade(paymentMade);
+      })
+      .catch((error) => {
+        setPaymentError(error);
+      });
+  };
 
   const FieldsRenderer = useMemo(
     () =>
       ({ fields, className }: { fields: any[]; className: string }) => {
         const renderAnyFields = (field: any) => {
           return (
-            <>
+            <Fragment key={field.id}>
               {/* Input text/texarea/number */}
               {(field.type === "text" ||
                 field.type === "textarea" ||
@@ -53,7 +81,7 @@ const OneTimePayment = () => {
                   className={className}
                 />
               )}
-            </>
+            </Fragment>
           );
         };
         const isHiddenField = (field: { hidden: string }) => {
@@ -118,10 +146,7 @@ const OneTimePayment = () => {
             <div className="flex items-end w-[332px]">
               <div className="p-3 text-center">
                 <Paragraph
-                  className={[
-                    "!leading-5 p-4 font-medium m-auto",
-                    // watch("typeOfChecking") === "checking" ? "w-60" : "",
-                  ]
+                  className={["!leading-5 p-4 font-medium m-auto"]
                     .join(" ")
                     .trim()}
                 >
@@ -145,12 +170,34 @@ const OneTimePayment = () => {
               </div>
             </div>
           </div>
+
           <div className="py-4 flex gap-2 items-center">
-            <Button type="submit">{ONE_TIME_PAYMENT_MAKE_PAYMENT}</Button>
+            <Button
+              type="submit"
+              disabled={paymentMade && !paymentError ? true : false}
+            >
+              {ONE_TIME_PAYMENT_MAKE_PAYMENT}
+            </Button>
             <label className="p-1 text-label">
               {ONE_TIME_PAYMENT_FIELDS_REQUIRED}
             </label>
           </div>
+          {paymentError ? (
+            <div className="w-full text-center text-lg text-red-500">
+              <Paragraph>{paymentError?.message}</Paragraph>
+            </div>
+          ) : null}
+          {paymentMade ? (
+            <div className="w-full text-center text-2xl text-green-500">
+              <Paragraph>{paymentMade?.message}</Paragraph>
+              <Paragraph>
+                <>
+                  {ONE_TIME_PAYMENT_MADE_CONFIRMATION}:{" "}
+                  {paymentMade?.confirmation}
+                </>
+              </Paragraph>
+            </div>
+          ) : null}
         </>
       </Form>
     </>

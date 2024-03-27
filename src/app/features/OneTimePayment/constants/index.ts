@@ -9,3 +9,4 @@ export const ONE_TIME_PAYMENT_WHERE_CVV_NUMBER =
 export const ONE_TIME_PAYMENT_FORM = "one-time-payment-form";
 export const ONE_TIME_PAYMENT_MAKE_PAYMENT = "Make Payment";
 export const ONE_TIME_PAYMENT_FIELDS_REQUIRED = "All fields required";
+export const ONE_TIME_PAYMENT_MADE_CONFIRMATION = "Confirmation number";
