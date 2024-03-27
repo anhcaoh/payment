@@ -9,9 +9,10 @@ import { useMemo } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import {
   ONE_TIME_PAYMENT_DESCRIPTION,
+  ONE_TIME_PAYMENT_FIELDS_REQUIRED,
   ONE_TIME_PAYMENT_FORM,
   ONE_TIME_PAYMENT_HEADING,
-  ONE_TIME_PAYMENT_MAKE_PAY,
+  ONE_TIME_PAYMENT_MAKE_PAYMENT,
 } from "./constants";
 
 const OneTimePayment = () => {
@@ -73,6 +74,14 @@ const OneTimePayment = () => {
       maxLength: 12,
       schema: {
         required: "Confirm Bank Account Number is required",
+        minLength: {
+          value: 9,
+          message: "At least nine digits",
+        },
+        maxLength: {
+          value: 12,
+          message: "No more than 12 digits",
+        },
       },
       hidden: "typeOfChecking:debitCard",
     },
@@ -86,6 +95,14 @@ const OneTimePayment = () => {
       type: "number" as IInput["type"],
       schema: {
         required: "Card Number is required",
+        minLength: {
+          value: 12,
+          message: "Valid 12-digits number",
+        },
+        maxLength: {
+          value: 12,
+          message: "Valid 12-digits number",
+        },
       },
       hidden: "typeOfChecking:checking",
     },
@@ -97,7 +114,7 @@ const OneTimePayment = () => {
       type: "text" as IInput["type"],
       hidden: "typeOfChecking:checking",
       schema: {
-        required: "Card Number is required",
+        required: "Name On Card is required",
       },
     },
     {
@@ -110,7 +127,7 @@ const OneTimePayment = () => {
       schema: {
         required: "Expiration Date is required",
       },
-      group: "exp-cvv",
+      group: "expCvv",
     },
     {
       id: "cvv",
@@ -123,8 +140,16 @@ const OneTimePayment = () => {
       hidden: "typeOfChecking:checking",
       schema: {
         required: "CVV number is required",
+        minLength: {
+          value: 3,
+          message: "Valid three digits",
+        },
+        maxLength: {
+          value: 3,
+          message: "Valid three digits",
+        },
       },
-      group: "exp-cvv",
+      group: "expCvv",
     },
   ];
   type FormSchema = typeof fields | { [key: string]: string };
@@ -143,32 +168,61 @@ const OneTimePayment = () => {
 
   const FieldsRenderer = useMemo(
     () =>
-      ({ field }: { field: any }) => {
-        const hiddenOnCondition = field.hidden?.split(":");
-        const [key, value] = hiddenOnCondition || [];
-        const values = watch();
-        const isHidden =
-          hiddenOnCondition &&
-          values &&
-          (values as { [key: string]: string })[key] === value;
-        return isHidden ? null : (
-          <>
-            {/* Input text/texarea/number */}
-            {(field.type === "text" ||
-              field.type === "textarea" ||
-              field.type === "number") && (
-              <Input {...field} control={control} register={register} />
-            )}
-            {/* Radio select */}
-            {field.type === "radio" && (
-              <Radio {...field} control={control} register={register} />
-            )}
-          </>
-        );
+      ({ fields }: { fields: any[] }) => {
+        const renderAnyFields = (field: any) => {
+          return (
+            <>
+              {/* Input text/texarea/number */}
+              {(field.type === "text" ||
+                field.type === "textarea" ||
+                field.type === "number") && (
+                <Input {...field} control={control} register={register} />
+              )}
+              {/* Radio select */}
+              {field.type === "radio" && (
+                <Radio {...field} control={control} register={register} />
+              )}
+            </>
+          );
+        };
+        const isHiddenField = (field: { hidden: string }) => {
+          const hiddenOnCondition = field.hidden?.split(":");
+          const [key, value] = hiddenOnCondition || [];
+          const values = watch();
+          const isHidden =
+            hiddenOnCondition &&
+            values &&
+            (values as { [key: string]: string })[key] === value;
+          return isHidden;
+        };
+        if (fields?.length === 1) {
+          return fields?.map((field) => {
+            return isHiddenField(field) ? null : renderAnyFields(field);
+          });
+        } else {
+          const maybeHiddenField = isHiddenField(fields[0]);
+          return (
+            <div
+              className={[
+                "flex flex-row gap-6",
+                maybeHiddenField ? "hidden" : "",
+              ]
+                .join(" ")
+                .trim()}
+            >
+              {fields?.map((field) => {
+                return isHiddenField(field) ? null : renderAnyFields(field);
+              })}
+            </div>
+          );
+        }
       },
     []
   );
-
+  const groupedByFields = Object.groupBy(
+    fields,
+    ({ group, name }) => group || name
+  );
   return (
     <>
       <div>
@@ -178,14 +232,18 @@ const OneTimePayment = () => {
       <Form onSubmit={handleSubmit(onSubmit)} name={ONE_TIME_PAYMENT_FORM}>
         <>
           <div className="border-2 border-gray-300 p-4">
-            <div className="flex flex-col gap-6">
-              {fields?.map((field) => (
-                <FieldsRenderer key={field.id} field={field} />
-              ))}
+            <div className="flex flex-col gap-6 min-w-[406px]">
+              {Object.entries(groupedByFields)?.map((keyFields) => {
+                const [key, fields] = keyFields as [string, {}[]];
+                return <FieldsRenderer key={key} fields={fields} />;
+              })}
             </div>
           </div>
           <div className="py-4">
-            <Button type="submit">{ONE_TIME_PAYMENT_MAKE_PAY}</Button>
+            <Button type="submit">{ONE_TIME_PAYMENT_MAKE_PAYMENT}</Button>
+            <label className="block p-1 text-label">
+              {ONE_TIME_PAYMENT_FIELDS_REQUIRED}
+            </label>
           </div>
         </>
       </Form>
