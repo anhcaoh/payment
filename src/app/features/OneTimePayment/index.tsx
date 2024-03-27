@@ -25,9 +25,7 @@ const OneTimePayment = () => {
   const { register, handleSubmit, watch, control } = useForm<FormSchema>({
     defaultValues: { typeOfChecking: "checking" },
   });
-  const onSubmit: SubmitHandler<FormSchema> = (data) => {
-    console.log(data);
-  };
+  const onSubmit: SubmitHandler<FormSchema> = (data) => {};
 
   const FieldsRenderer = useMemo(
     () =>
@@ -77,7 +75,7 @@ const OneTimePayment = () => {
           return (
             <div
               className={[
-                "flex flex-row gap-6",
+                "flex flex-row gap-4",
                 maybeHiddenField ? "hidden" : "",
               ]
                 .join(" ")
@@ -104,25 +102,25 @@ const OneTimePayment = () => {
       </div>
       <Form onSubmit={handleSubmit(onSubmit)} name={ONE_TIME_PAYMENT_FORM}>
         <>
-          <div className="sm:divide-x-0 lg:divide-x-2 border-2 border-gray-300 grid place-items-center lg:grid-cols-2 sm:grid-cols-1">
-            <div className="sm:divide-y-0 lg:divide-y-2 divide-gray-300 flex flex-col min-w-[406px]">
+          <div className="sm:divide-x-0 lg:divide-x-2 dark:divide-slate-800 dark:border-slate-800 border-2 border-gray-300 grid place-items-center lg:grid-cols-2 sm:grid-cols-1">
+            <div className="sm:divide-y-0 lg:divide-y-2 divide-gray-300 dark:divide-slate-800 flex flex-col min-w-[430px]">
               {Object.entries(groupedByFields)?.map((keyFields) => {
                 const [key, fields] = keyFields as [string, {}[]];
                 return (
                   <FieldsRenderer
                     key={key}
                     fields={fields}
-                    className="px-2 py-4"
+                    className="px-2 pt-2 pb-4"
                   />
                 );
               })}
             </div>
-            <div className="flex items-end w-80">
+            <div className="flex items-end w-[332px]">
               <div className="p-3 text-center">
                 <Paragraph
                   className={[
                     "!leading-5 p-4 font-medium m-auto",
-                    watch("typeOfChecking") === "checking" ? "w-60" : "",
+                    // watch("typeOfChecking") === "checking" ? "w-60" : "",
                   ]
                     .join(" ")
                     .trim()}
