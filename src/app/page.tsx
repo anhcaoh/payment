@@ -1,9 +1,8 @@
 import OneTimePaymentFeat from "./features/OneTimePayment";
-import styles from "./page.module.css";
 
 export default function Home() {
   return (
-    <main className={styles.main}>
+    <main className="container h-screen mx-auto p-4">
       <OneTimePaymentFeat />
     </main>
   );

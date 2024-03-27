@@ -118,6 +118,7 @@ const OneTimePayment = () => {
       },
     []
   );
+
   const groupedByFields = fields.reduce((accum, field) => {
     const { group, name } = field;
     accum[group || name] = accum[group || name] ?? [];
@@ -132,8 +133,8 @@ const OneTimePayment = () => {
             <Heading>{ONE_TIME_PAYMENT_HEADING}</Heading>
             <Paragraph>{ONE_TIME_PAYMENT_DESCRIPTION}</Paragraph>
           </div>
-          <div className="bg-white dark:bg-transparent sm:divide-x-0 lg:divide-x-2 dark:divide-slate-800 dark:border-slate-800 border-2 border-gray-300 grid place-items-center lg:grid-cols-2 sm:grid-cols-1">
-            <div className="divide-y-2 divide-gray-300 dark:divide-slate-800 flex flex-col min-w-[430px]">
+          <div className="bg-white dark:bg-transparent sm:divide-x-0 lg:divide-x-2 dark:divide-slate-800 dark:border-slate-800 border-2 border-gray-300 grid lg:grid-cols-2 sm:grid-cols-1">
+            <div className="divide-y-2 divide-gray-300 dark:divide-slate-800 flex flex-col">
               {Object.entries(groupedByFields)?.map((keyFields) => {
                 const [key, fields] = keyFields as [string, {}[]];
                 return (
@@ -141,7 +142,7 @@ const OneTimePayment = () => {
                 );
               })}
             </div>
-            <div className="flex items-end w-[332px]">
+            <div className="flex m-auto place-items-center">
               <div className="p-3 text-center">
                 <Paragraph
                   className={["!leading-5 p-4 font-medium m-auto"]
